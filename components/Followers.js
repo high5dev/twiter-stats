@@ -34,7 +34,7 @@ export default function Followers({session}) {
         console.log(session.user)
     })
 
-    if (data && data.error && data.error.errors[0] && data.error.errors[0].code === 89) {
+    if (data && data?.error && data?.error?.errors[0] && data?.error?.errors[0].code === 89) {
         signOut();
     }
 
