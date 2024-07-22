@@ -1,8 +1,8 @@
 import useSWR from 'swr'
-import {useRef, useState, useEffect} from "react";
-import {signOut} from "next-auth/react";
+import { useRef, useState, useEffect } from "react";
+import { signOut } from "next-auth/react";
 import Image from 'next/image'
-import {UserGroupIcon} from "@heroicons/react/solid";
+import { UserGroupIcon } from "@heroicons/react/solid";
 import HtmlToImage from "../components/HtmltoImage";
 import ProfileImage from "../public/profile-pic.png";
 import Tilt from "vanilla-tilt";
@@ -10,12 +10,12 @@ import formatNumber from "../lib/NumberFormater";
 
 const fetcher = (...args) => fetch(...args).then(res => res.json());
 
-export default function Followers({session}) {
+export default function Followers({ session }) {
     const [isAutoRefresh, setIsAutoRefresh] = useState(false);
     const ref = useRef(null);
 
-    const {data, error} = useSWR(session ? '/api/twitter/user' : null, fetcher,
-        {refreshInterval: isAutoRefresh ? 30000 : 0, revalidateOnFocus: false}
+    const { data, error } = useSWR(session ? '/api/twitter/user' : null, fetcher,
+        { refreshInterval: isAutoRefresh ? 30000 : 10, revalidateOnFocus: false }
     );
 
     useEffect(() => {
@@ -31,7 +31,8 @@ export default function Followers({session}) {
     }, [ref, data]);
 
     useEffect(() => {
-        console.log(session.user)
+        console.log(data)
+        console.log(session)
     })
 
     if (data && data?.error && data?.error?.errors[0] && data?.error?.errors[0].code === 89) {
@@ -56,27 +57,22 @@ export default function Followers({session}) {
                         className="flex bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg md:mr-10 p-4 mb-4 md:mb-0
                              justify-center items-center transition ease-in-out delay-150 hover:-translate-y-1
                              hover:scale-110 hover:from-pink-500 hover:to-yellow-500">
-                        <UserGroupIcon className="h-10 text-white"/>
+                        <UserGroupIcon className="h-10 text-white" />
                         <div className="text-4xl ml-4 align-middle font-semibold 2xl:text-6xl">
-                            {session?.user ? session.user.name : ''}
+                            {session?.user ? session.user.name + ' followed by ' + session.twitter.followersCount + ' person' : ''}
                         </div>
                     </div>
-                    {/* <div className="flex items-center md:justify-end w-full exclude-in-image justify-center">
-                        <HtmlToImage imageRef={ref} userName={session.user.name}/>
-                    </div> */}
                 </div>
-                {userData &&
-                    <figcaption className="font-medium 2xl:pb-5">
-                        <a className="text-sky-500 2xl:text-4xl" target="_blank"
-                           rel="noreferrer"
-                           href={`https://twitter.com/${userData.twitterHandle}`}>
-                            @{userData.twitterHandle}
-                        </a>
-                        <div className="text-gray-700 2xl:text-3xl text-gray-400">
-                            {userData && userData.location}
-                        </div>
-                    </figcaption>
-                }
+                <figcaption className="font-medium 2xl:pb-5">
+                    <a className="text-sky-500 2xl:text-4xl" target="_blank"
+                        rel="noreferrer"
+                        href={`https://twitter.com/${session.twitter.twitterHandle}`}>
+                        @{session.twitter.twitterHandle}
+                    </a>
+                    <div className="text-gray-700 2xl:text-3xl text-gray-400">
+                        {session && session.user.name}
+                    </div>
+                </figcaption>
                 <blockquote>
                     <p className="text-lg font-medium 2xl:text-3xl dark:text-gray-400">
                         {userData && userData.description}
