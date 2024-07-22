@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import Layout from "../components/Layout";
 import Button from "../components/Button";
-import GitHubButton from "../components/GitHubButton";
 
 export default function Error() {
     return (
@@ -15,7 +14,6 @@ export default function Error() {
                         <Button label="Go to Home"/>
                     </a>
                 </Link>
-                <GitHubButton/>
             </div>
         </Layout>
     )
